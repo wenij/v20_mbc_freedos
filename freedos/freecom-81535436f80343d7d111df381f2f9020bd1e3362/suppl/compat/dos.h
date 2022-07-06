@@ -5,29 +5,39 @@
 
 static inline unsigned char inportb (unsigned short int port)
 {
+#if 0   /* wenij's V20-MBC not support */ 
 	unsigned char v;
 
 	asm volatile ("inb %w1,%0":"=a" (v):"Nd" (port));
 	return v;
+#else
+    return 0;
+#endif    
 }
 
 static inline void outportb (unsigned short int port, unsigned char value)
 {
+#if 0  /* wenij's V20-MBC not support */  
 	asm volatile ("outb %b0,%w1": :"a" (value), "Nd" (port));
+#endif    
 }
 
 /* From LGPL DJGPP libc, Copyright (C) 1995 DJ Delorie */
 static inline void sound(int freq)
 {
+#if 0  /* wenij's V20-MBC not support */
 	int scale = 1193046 / freq;
 	outportb(0x43, 0xb6);
 	outportb(0x42, scale & 0xff);
 	outportb(0x42, scale >> 8);
 	outportb(0x61, inportb(0x61) | 3);
+#endif	
 }
 static inline void nosound(void)
 {
+#if 0 /* wenij's V20-MBC not support */
 	outportb(0x61, inportb(0x61) & ~3);
+#endif	
 }
 
 union REGPACK {

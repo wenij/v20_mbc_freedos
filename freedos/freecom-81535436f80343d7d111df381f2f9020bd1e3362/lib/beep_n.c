@@ -48,8 +48,8 @@
 
 void beep(void)
 {
-  sound(900);
+  //sound(900);
   delay(200); /* 400 */
-  nosound();
+  //nosound();
   delay(100);
 }

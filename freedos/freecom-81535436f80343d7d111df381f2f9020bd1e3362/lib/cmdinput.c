@@ -22,6 +22,7 @@ static unsigned orgx, orgy;		/* start of current line */
 typedef struct { unsigned char col, row; } SCRPOS;
 #define _scr_page      (* MK_PTR (volatile const unsigned char, 0, 0x462))
 #define _scr_pos_array    MK_PTR (volatile const SCRPOS, 0, 0x450)
+#if 0 //fixed for V20-MBC
 unsigned mywherex (void) {
     return _scr_pos_array [_scr_page].col + 1;
 }
@@ -29,7 +30,24 @@ unsigned mywherex (void) {
 unsigned mywherey (void) {
     return _scr_pos_array [_scr_page].row + 1;
 }
+#else
+extern unsigned short get_bios_cursor_xy( void );
+#pragma aux get_bios_cursor_xy = \
+            "push dx"           \
+            "mov ax,0300h"       \
+            "int 10h"            \
+            "mov di,dx"          \
+            "pop dx"             \
+            value     [di]    \
+            modify    [ax];
 
+unsigned mywherex (void) {
+    return (get_bios_cursor_xy() & 0x00FF)+1;
+}
+unsigned mywherey (void) {
+    return ((get_bios_cursor_xy() >> 8) & 0x00ff)+1;
+}
+#endif
 #undef _NOCURSOR
 #undef _NORMALCURSOR
 #undef _SOLIDCURSOR
