@@ -1,0 +1,153 @@
+WHATSNEW.TXT - DX-FORTH for DOS
+
+Only significant changes/fixes listed.  See CHANGES.TXT and
+DXFORTH.GLO for details.
+
++ added  - removed  * fixed  ! changed  = updated
+
+v4.45  2022-01-11
+
++  C/STRING ?ABORT
+!  READ-LINE
+!  ." made state-smart
+!  .( deprecated and moved to TOOLS
+=  MOVE
+!  DOSLIB: add/remove functions
+=  BLK2TXT TXT2BLK HLOCALS
+*  OVERLAY
+
+v4.44  2020-10-11
+
++  MAX-PATH
+*  CLOSE-ALL didn't close text-files
+
+v4.43  2020-08-05
+
++  >NAME .YN /FLOAT
+!  Y/N /NUMBER
+-  .NAME
+!  DOSLIB: Change/rename functions. Fix NEXTNUM
+=  BLK2TXT TXT2BLK SCOPY SSED
+*  TED
+
+v4.42  2019-11-19
+
++  HALT? /SIGN /NUMBER RDROP >DRV
++  Default screen-file (FORTH.SCR)
+-  /ACCEPT I'
+!  , C, F, S, LINK, moved to Application
+!  >FLOAT ALLOT RESERVE UPPER
+!  Vocabs FORTH ASSEMBLER EDITOR made Immediate
+!  DOSLIB: Add/rename functions
+=  BLK2TXT TXT2BLK SCOPY
+
+v4.41  2018-08-19
+
++  /ACCEPT >PAD
++  Support for 8-bit character input and strings
+*  +STRING fix overlapping move up
+!  PC extended key codes relocated to 256+
+!  DOSLIB: Add/rename functions
++  SCOPY screen copy utility
+=  BLK2TXT TXT2BLK
+
+v4.40  2017-11-08
+
++  RESERVE BREAK >BLANKS >IOR SETDMA
++  LMI timer variables (LMTICKER.F)
+*  READ-LINE failed when last char in buffer was $0D
+!  Rename THENS EOL to CONT (CR)
+!  CSP reverts to single cell
+!  ASM: Rename USER# [UP] to U# [U]
+!  DOSLIB: Add/rename functions
+!  Multitasker is now supplied in two forms
+!  TYPE changed from positive count (+n) to unsigned (u)
+
+v4.30  2017-02-11
+
++  I' END BOUNDS
+-  (EXIT)
+!  EXIT made non-immediate
+!  MISC: Add MJD. Rename D/MOD to SD/REM
+
+v4.20  2016-10-07
+
++  EOL
+!  QUIT moved to Application
+!  Rename PARSE$ FREEZE PACKED to /PARSE PROTECT PACK
+
+v4.10  2016-07-13
+
++  (.) (U.)
+
+v4.09  2016-05-20
+
+!  Rename WORDS-LIKE to WORDS:
+
+v4.08  2016-01-16
+
+*  File not found error in INCLUDE displays wrong filename
+
+v4.07  2016-01-07
+
++  TRIM
+*  WARNING incorrectly disabled by consecutive -?
+
+v4.06  2015-07-26
+
++  LAST BAL
+-  +BAL -BAL
+*  Turnkey initialization improperly wrote to high memory
+!  CSP extended to 2 cells
+
+v4.05  2015-05-16
+
++  BINARY -BLANKS LASTFILE
++  Interpret numbers with % prefix as binary
++  TED text file editor
+-  CTOGGLE (see MISC.SCR for alternative)
+!  APPLICATION moved to Application dictionary
+
+v4.04  2015-04-12
+
++  #USER .FREE LS BOLD BRIGHT INVERSE
+*  Fix ASMTEST to use -ALLOT
+!  ABORT" made state-smart
+!  Rename FILE? to SCREEN?
+!  Revised multitasker locals
+
+v4.03  2015-01-07
+
++  -ALLOT
+!  ALLOT may no longer use negative values. See glossary.
+!  /MS is now DEFERed
+
+v4.02  2014-09-29
+
++  WAIT-TICK
+*  LOCALS.SCR updated to compile with DX4
+!  . and ? display unsigned when BASE not decimal
+
+v4.01  2014-07-22
+
+*  ASM: Fix bug in XCHG which caused subsequent instructions to be
+   assembled in BYTE mode
+
+v4.00  2014-07-19
+
++  2NIP @EXECUTE W>NAME CMDTAIL PARSE$ >FNAME TOKEN WORDS-LIKE CHAIN
++  CTOGGLE PACKED S.R SHOLD NHOLD LREAD LWRITE LINK, S, ?BLOCK
++  FPICK S>F F>S
++  READ-LINE recognizes CP/M EOF terminator ($1A)
+-  PARSE" ASCIIZ M/MOD
+-  ONLY ALSO PREVIOUS WORDLIST SEARCH-WORDLIST FORTH-WORDLIST ENVIRONMENT?
+*  INCLUDED didn't restore block contents
+*  TXT2BLK fixed to work with CP/M
+!  ADDR made state-smart
+!  OPEN now requires a file-access-method
+!  Rename >NEXT, FORWARD, BACK to 'NEXT, >MARK, <RESOLVE
+!  WORDS "pattern" now handled by WORDS-LIKE
+!  Improve compiler security
+!  MARKER is no longer ANS compatible
+!  Allow leading decimal point on float input
+

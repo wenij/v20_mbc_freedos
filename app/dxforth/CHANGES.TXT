@@ -1,0 +1,130 @@
+                          IMPORTANT CHANGES
+
+This document discusses changes to DX-Forth for DOS that may adversely
+affect previously written programs.  It is recommended users update their
+programs to the latest DX-Forth version.  See WHATSNEW.TXT for a summary
+of other changes and additions.
+
+
+v4.45
+
+   READ-LINE status changed from true|false result to a ternary value
+   (-1|0|1).  See DXFORTH.GLO for details.
+
+   ." is now state-smart allowing it to be used in interpret mode.
+   .( is deprecated and moved to TOOLS for backward compatibility.
+   Applications supplied in the DX-Forth distribution have been updated
+   to reflect the change.
+
+   DOSLIB changes:
+
+     C/STRING moved to kernel.  (D.R) (U.R) is removed as applications
+     can use new string function (S.R), or define:
+
+     : (D.R) ( d w -- a u )  >R (D.) R> (S.R) ;
+     : (U.R) ( u w -- a u )  0 SWAP (D.R) ;
+
+v4.44
+
+   DOSLIB changes:
+
+     Renamed /INBUF /OUTBUF to #INBUF #OUTBUF
+
+v4.43
+
+   .NAME is deleted.  The direct equivalent is: >NAME .ID
+
+   Removed embedded string '(y/n)' from Y/N.
+
+   /NUMBER introduced in 4.42 is replaced with a new function.  Previous
+   usage should be replaced with:  0 0 2SWAP >NUMBER
+
+   >FLOAT reverts back to Forth-94 specification in respect of string
+   of blanks and empty string (see 4.42 below).
+
+   DOSLIB changes:
+
+     FINDALL now requires the attribute (usually 0) be provided as an
+     argument.
+
+     Renamed QSORT FREPOS REPOSINFILE REPOSOUTFILE INFILEPOS OUTFILEPOS
+     to SORT FSEEK SEEKINFILE SEEKOUTFILE POSINFILE POSOUTFILE
+     respectively.
+
+     /INTEGER /RAWNUM are deleted.  Kernel /NUMBER replaces /INTEGER.
+     /RAWNUM may be replaced by /NUMBER DROP.
+
+     >FID returns -1 to indicate handle closed (previously 0).
+
+v4.42
+
+   ALLOT and RESERVE no longer perform an ERASE.  This permits data of
+   arbitrary length to be loaded at HERE and then ALLOTed.  See /ALLOT
+   /RESERVE in MISC.SCR for versions that erase.
+
+   Forth-94 recommendation that >FLOAT returns 0.0E and true for a
+   string of blanks is no longer supported.  A zero length string now
+   returns false.  See >FLOAT in glossary.
+
+   The fig-FORTH convention of making vocabularies IMMEDIATE has been
+   adopted.  Consequently FORTH ASSEMBLER HIDDEN EDITOR are now
+   immediate.
+
+   UPPER now assumes the SSEG segment for increased flexibility.
+
+v4.41
+
+   Console input has been changed to allow 8 bit character sets (see KEY
+   in glossary).  Consequently the PC extended key codes now start at
+   256 instead of 128.  See DXFORTH.TXT for a listing of the new codes.
+
+   Character propagation in CMOVE & CMOVE> is no longer supported.  To
+   fill a region with a specified character use FILL.
+
+v4.40
+
+   CSP changed from double cell variable back to a single.  Files in the
+   distribution updated.
+
+   TYPE changed to use unsigned count.  SPACES count remains signed for
+   backward compatibility but see glossary on handling negative counts.
+
+   Renamed USER# [UP] to U# [U] respectively in the assembler.
+
+v4.30
+
+   Removed immediate EXIT and renamed (EXIT) to EXIT.
+
+v4.07
+
+   -TRAILING ZCOUNT now use the SSEG segment.  See SSEG in the glossary
+   for details.
+
+v4.05
+
+   EDIT can no longer be used to load the editor from disk.  You must use
+   SED or TED for that.  Once the editor is loaded and saved as part of
+   the system, EDIT can be added as a synonym.
+
+v4.03
+
+   ALLOT has been changed (for the better).  Unlike Forth-94 ALLOT only
+   unsigned values may be used.  Applications which used negative values
+   with ALLOT should be changed to use -ALLOT instead.  Programs which
+   require Forth-94 behaviour can be accommodated with the following
+   redefinition:
+
+     : ALLOT ( n -- )  NEGATE -ALLOT ;
+
+   Note however that memory checking is not performed.
+
+v4.02
+
+   Functions '.' and '?' adopt the eForth behaviour i.e. when BASE is
+   decimal display signed; otherwise display unsigned.  Only these
+   functions and those which use them are affected.  Applications
+   requiring Forth-94 behaviour may redefine:
+
+     : . ( n -- )  S>D D. ;
+
+
