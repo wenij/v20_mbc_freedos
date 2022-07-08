@@ -34,6 +34,10 @@ bootdisk:  freedos
 	del bootdisk\KWC8616.sys
 
 	copy /Y app\sys\* bootdisk\
+	
+	md bootdisk\f83
+
+	copy /Y app\f83\* bootdisk\f83\ 
 
 	$(BFI) -b=freedos\ke2043\boot\fat12com.bin -f=$(BOOTDISK_NAME) bootdisk
 	
@@ -48,6 +52,6 @@ clean:
 	-rd /s /q bootdisk
 	for %%x in ( $(DISK_SET) ) do if  exist "%%x" rd /s /q %%x
 
-	-del *.ima *.dsk
+	-del *.ima DS2N00.DSK DS2N01.DSK
 
 .PHONY: freedos $(DISK_SET)
