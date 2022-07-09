@@ -12,10 +12,12 @@ BOOTDISK_NAME=DS2N00.DSK
 export PATH:=$(NASM);$(WATCOMM);$(PATH)
 
 DISK_SET = bootdisk
-DISK_SET += disk_b
+DISK_SET += disk_b 		## for F83 
+
 
 all: $(DISK_SET)
 
+## put F83 in this disk_b
 disk_b:
 	@if not exist "$@" mkdir $@
 
@@ -35,10 +37,6 @@ bootdisk:  freedos
 
 	copy /Y app\sys\* bootdisk\
 	
-	md bootdisk\f83
-
-	copy /Y app\f83\* bootdisk\f83\ 
-
 	$(BFI) -b=freedos\ke2043\boot\fat12com.bin -f=$(BOOTDISK_NAME) bootdisk
 	
 
