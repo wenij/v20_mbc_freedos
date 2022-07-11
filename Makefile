@@ -37,6 +37,9 @@ bootdisk:  freedos
 
 	copy /Y app\sys\* bootdisk\
 	
+	md bootdisk\asm
+	copy /Y app\asm\* bootdisk\asm\
+
 	$(BFI) -b=freedos\ke2043\boot\fat12com.bin -f=$(BOOTDISK_NAME) bootdisk
 	
 

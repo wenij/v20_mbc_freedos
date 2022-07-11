@@ -1,0 +1,10 @@
+This zip file (contrib.zip) contains some contributions by Doug
+Williams.
+
+  - pygmy17a.scr :: a modified version of pygmy.scr 
+
+  - notes-daw-20100504-0905.txt :: description of the changes
+
+
+-- 
+Frank

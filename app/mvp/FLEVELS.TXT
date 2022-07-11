@@ -1,0 +1,250 @@
+                                 LEVELS OF FORTH
+
+                                 Glen B. Haydon
+                              Mountain View Press
+                                Box 429 Route 2
+                              La Honda, CA 94020
+
+        This paper was presented at the 1991 Rochester Forth Conference.
+
+
+                                   Abstract
+
+  Match the level of Forth with the user and the application.
+
+
+                                Introduction
+
+  Ontogeny recapitulate phylogeny. I guess it was John Dewey who emphasized 
+that you start a student where he is. The needs of novices perhaps 
+evolve in somewhat the same way as the history. If you are already 
+at the end, you have no place to go.
+
+  A problem people in the Forth community face is the variety of applications 
+which lend themselves to the language and the diversity of experience 
+of the potential Forth users. One way to address the problems is to 
+identify progressive levels of Forth with which to match the users 
+and the applications. These Levels follow the history.
+
+Level 0.
+
+  On several occasions C.H. Moore has listed approximately 63 functions 
+which he considers the essence of Forth. I noted them at one presentation 
+as follows:
+
+     +  -  *  /MOD  MIN  MAX  =  AND  OR  XOR
+
+     NEGATE  ABS  NOT  */  DUP  DROP  SWAP  OVER
+
+     DECIMAL  HEX  OCTAL  .  n  .R
+
+     CR  EMIT  KEY   :  ;  CREATE  ,  ALLOT
+
+     IF  ELSE  THEN  FOR  NEXT  I
+
+  There are only 45 functions in this list. You can see about which 
+period this was. The list does not include BEGIN, UNTIL, and several 
+other functions belong in Level 0. A figure of about 63 is appropriate.
+
+  Three functions are used for output to the display. He included 
+no functions for any kind of storage. Screens are not included much 
+less any means of writing on such a screen.
+
+  Something more than Level 0 is necessary to provide anyone but Chuck 
+enough to work with.
+
+Level 1.
+
+  The fig-Forth Installation Manual provides a complete set of Forth 
+functions. The implementation with the Installation Manual is for 
+the 6502. Since then, over a dozen implementations of fig-Forth for 
+other processors were written and are still available in hard copy. 
+About forty hours of careful typing will allow one to enter a listing.
+
+  At that time we lacked an editor. It was a chicken and egg problem. 
+Though one had screens for compiling code there was no way to write 
+to a screen until an editor was included. A simple single function 
+editor allowed one to place code on a specific line of an already 
+listed screen.
+
+  The fig-Forth model served as a wonderful learning tool. There was 
+little in the way of documentation beyond the Installation Manual 
+and the source listings. A few computer teaching programs did appear. 
+The older publications such as the Kitt Peak Primer and Using Forth 
+did not mesh well with the public domain version available.
+
+  Execellent applications have been done in fig-Forth.
+
+  The fig-Forth implementations took over the disk precluding its 
+use for other programs. The error messages were stored on a disk.
+
+  Soon there came the 79 Standard which made several changes. It was 
+then proposed that the Forth Interest Group stop supplying the fig-Forth 
+source listings.
+
+Level 2.
+
+  The 79 Standard made about 40 changes to the functions in fig-Forth. 
+These made some things much easier. About the same time Leo Brody 
+came out with the first edition of Starting Forth. This is an excellent 
+book for a beginner. He developed the first part of the book in a 
+very careful and artistic manner. Then he had to get on with the job.
+
+  At that time, Mountain View Press came out with a Forth implementation 
+incorporating the 79 Standard changes. It put the error messages in 
+line and added supplemental functions so that all but one of the functions 
+matched those covered in Starting Forth. The single problem was 'tic'.
+
+  The assembler for several processors was included. A Forth editor 
+described in Chapter 3 of Starting Forth written by Sam Daniels is 
+included. Note: Starting Forth does not point out that you have to 
+invoke the EDITOR vocabulary for it to work!
+
+  The complete source listing of MVP Forth was published for three 
+processors. The appropriate source is included on each distribution 
+disk. The Glossary, ALL ABOUT FORTH 2nd Edition, included the functional 
+definitions, source code for the 8080, examples and comments for each 
+of about 240 functions. The 3rd. Edition of ALL ABOUT FORTH has been 
+expanded to include some 500 functions in common usage.
+
+  The distribution Version 03 of MVP Forth has remained unchanged 
+since April 1983. Unfortunately several copies which have appeared 
+on bulletin boards while being designated MVP Forth have been modified. 
+The original Version 3 is now available of the Gene Forth Round Table 
+and the Mountain View Press bulletin board.
+
+  The MVP Forth implementation takes over a disk format. But the file 
+on Gene includes several added utilities which allow one to access 
+screens in files and the compiling of text files written with any 
+word processor.
+
+  Most of the Forth text books and tutorials begin with a discussion 
+of stacks. After all it is the stacks which makes Forth what it is. 
+But for most beginners stacks are a complication and a distraction. 
+In the FORTH GUIDE, a different introduction is used.
+
+  The hardware designer and engineer have other interests besides 
+learning yet another language. A small language which allows him to 
+get on with his work would be sufficient. Levels 1 and 2 are closely 
+bound to the hardware and serves such programmers well.
+
+Level 3.
+
+  Several developments led to a new implementation. The 83 Standard 
+was finally adopted. Few people had a computer dedicated to Forth. 
+They needed their computer for other things. There was also a growing 
+library of Forth functions which could be incorporated.
+
+  F83, by Henry Laxon and Mike Perry, took the next step. F83 includes 
+nearly 1000 functions. A substantial library of Forth functions was 
+added. Ting's book, Inside F83, provided much documentation.
+
+  The most popular implementation of F83 is for the Intel based systems. 
+It makes use of screens but now in files. A dedicated disk is no longer 
+necessary and programs could be developed and run from a hard disk. 
+Many of the functions were optimized assembler code which improved 
+the speed. With the library of functions, we were on the way to an 
+implementation of Forth for programmers. Ting's book, Inside F83, 
+was a big help in printed documentation.
+
+  But F83 with its increased vocabulary presented a greater learning 
+hurdle for the engineer and hardware type who had no interest in programming. 
+There was much more to learn than was necessary for him. Of course, 
+if he learned the language, he had more power available to him.
+
+Level 4.
+
+  With a programmers demand for a more complete development system 
+Tom Wempe developed his PADS system. At the same time, Tom Zimmer 
+with many collaborators, went through many verisions of what became 
+known as FPC.
+
+  FPC is a full Forth Development System with a built in editor, debugger 
+and many other features making it an outstanding package. However, 
+the vocabulary has grown to nearly 2500 functions - A real learning 
+challenge.
+
+  All of the source code is in text files. In fact, there are more 
+source and help files in FPC than there are functions in fig-Forth. 
+But the many features do not detract from speed for the experienced 
+user. All possible speed is milked out of the processor. When added 
+to the TCOM program small target compiled applications can be made.
+
+  The program and files are large. One needs a couple of megabytes 
+of disk space available. To do all that it does, the space is needed. 
+For the professional programmer, FPC is an excellent model. Ting has 
+provided us the F-PC Technical Reference Manual and the F-PC Users 
+Manual.
+
+  But for the engineer and hardware designer who is not interested 
+in programming languages, the learning curve has increased. It may 
+be more than he wants. However, with such a development system, Tom 
+Zimmer has shown that hardware problems can be easily solved.
+
+Level 5.
+
+  For many purposes, 32-bit values are overkill, but they are the 
+coming processors. The segmented architecture of the Intel processors 
+has led to severe limitations. Various schemes of memory management 
+have been developed to work around some of those limitations. A 32-bit 
+Forth system should have 32-bit stacks and address space. Some means 
+should be found to deal efficiently  with 16-bit addresses in the 
+segmented architecture.
+
+  F32, by Rick VanNorman solves some of these issues. He has created 
+a full development package including a text editor and assembler in 
+about 900 words. This has been a outgrowth of his years of experience 
+with Forth. He has placed the program in the public domain and is 
+available from several sources including the Mountain View Press bulletin 
+board.
+
+  His code is neat and well organized providing reasonable documentation 
+for an experienced Forth programmer. However, there is as yet no printed 
+documentation available. I expect that there will be some before long. 
+This implementation is not intended for a beginning Forth programmer.
+
+
+
+Discussion.
+
+  These Levels are oriented toward systems based on Intel processors. 
+Most of them operate under a PC-DOS or MS-DOS environment. Other systems 
+also make use of Forth. The Sun work station is built with a Forth 
+monitor, and runs Unix. The Macintosh has available several Forth 
+implementations. A Forth like Yerkes evolved out of NEON and runs 
+on the Macintoch. These implementations are not for the beginner who 
+wants a small language to get started. World wide there are still 
+more implementations of Forth.
+
+  This is not to ignore the many professional Forth implementations. 
+I consider these levels of Forth as models. Depending on ones interest 
+and time, he can delve as deeply as he wishes.
+
+  For professional programmers, the professionally written implementations 
+are well honed. They provide full development platforms. The big advantage 
+of the professional systems is the many extensions and the level of 
+documentation and support available from the respective companies.
+
+  The professional products include an appropriate tutorial. I have 
+read the documentation and tried a number of the professional implementations. 
+They are good. Having an interest in implementation as well, I find 
+the hidden proprietary nature of most of them to be frustrating. For 
+a programmer these works offer the professional touch not found in 
+the public domain implementations.
+
+  The problem then boils down to determining the programming level 
+of the user and his applications. Select a tutorial or instructional 
+manual and work through it. The order in each is different. Trying 
+to learn from several at once will only confuse the student. Don't 
+demand that the hardware designer and engineer be master computer 
+scientists as well. Don't make the computer scientist work with minimal 
+amateurish tools.
+
+  I think that there is a niche for Forth. The full blown development 
+systems, whatever the language used, is overwhelming for many engineer 
+and hardware designers. The interactive capability of Forth supplies 
+these users a rapid means of progress. A small set of functions which 
+meet his needs is sufficient. 
+
+  All users are not equal. 
+

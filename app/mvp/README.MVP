@@ -1,0 +1,96 @@
+                INTRODUCTION TO MVPFORTH
+
+  MVPFORTH with fewer than 240 functions to learn is ideal for
+beginners. Excluding the necessary primitive there are only about
+100 functions to master. With all of the source code and good
+documentation in the new All About FORTH, 3rd Ed., June 1990, nothing
+has been hidden from the user!
+
+  The System Disk and Screens Disk from Mountain View Press are
+supported by a documentation manual which clarifies some of the
+problems which those MVPFORTH users not having the documentation
+have had. Those problems include 4 warnings with later MASM, BYE in
+the initial LINKed MVPFORTH.EXE files and disk interfaces.
+
+  This distribution contains the files distributed earlier along
+with some additional material which should be of interest if not
+of help to many MVPFORTH users. The files now included are:
+
+     FGUIDE.TXT    -  A file version of The Forth Guide, Vol. 7 of
+                      the Mountain View Press Series. A beginners
+                      introduction to getting started with 
+                      programmig in Forth. 
+
+     FLEVELS.TXT   -  A review of five levels of Forth Implemen-
+                      tation of the Forth Programming Language.
+                      MVP Forth is designated Level 2.
+
+     MVPFORTH.ASM  -  The Assembler source for Version 1.0405.03 
+                      File dated 21 April 1983. Some users have
+                      distributed the Assembler source for 
+                      Version 1.0405.02 with the run time program
+                      Version 1.0405.03. Small wonder there were
+                      minor problems.
+
+     MVPFORTH.OBJ  -  The object code produced by the current MASM
+                      Assembler. The 4 warnings do not affect the
+                      compiled object.
+
+     MVPFORTH.EXE  -  The object code produced by LINK with 
+                      MVPFORTH.OBJ. This is the module which has 
+                      trouble with BYE before being converted to a
+                      COM file.
+
+     FORTHCOM.COM  -  The MVPFORTH.EXE converted to a COM file. 
+
+     FORTH.COM     -  FORTHCOM.COM with all of the original editor,
+                      supplemental, and assembler screens added from
+                      the distribution Screens Disk. It was saved 
+                      with SAVE-FORTH.
+
+     GBHFORTH.COM  -  The same as FORTH.COM, but with some hot 
+                      patches especially to ?CONFIGURE and LIMIT
+                      so that it can take advantage of some features
+                      without rewriting the Assembler Source Code.
+
+     GBH4TH.COM    -  GBHFORTH with GBHUTILITIES added. The most 
+                      important one is RECONFIGURE.
+
+     GBHUTILS.DOC  -  These added utilities are written in my newly
+                      suggested programming style for those using
+                      their own word processor and wanting to compile
+                      source as text files. Includes the source to
+                      do that but there is a chicken and egg problem.
+                      The COMPILE-TEXT function must be compiled before
+                      it can compile itself. Try the source in blocks.
+
+     SCREENS.ZIP   -  The Screens Disk made as a single file using the
+                      entire 360K disk. It can be UNZIPed to a new,
+                      freshly formatted 360K disk. That disk will work
+                      as all the previously distributed Screens Disk.
+
+     README        -  This file.
+
+   The MVPFORTH Screens Disk now contains a single file with no free
+space on the disk. The screens are in the same order and with the same
+screen numbers as before. A few additional utilities have been added.
+
+     SCREENS.MVP      This is the unzipped file SCREENS.ZIP
+
+
+
+   As I have often said, MVPFORTH has been stable since 21 April 1983.
+Mountain View Press continues to support it and has a 10 volume library
+of programs which use MVPFORTH. 
+
+   MVPFORTH is for beginners in Forth and others needing a small well
+established and supported Forth implementation. Its simplicity makes some
+of the techniques seem primitive but power is not sacrificed for many 
+applications.
+
+   Once MVPFORTH with less than 240 functions is mastered, moving to F83
+with about 1000 functions and FPC with more than 2500 functions will be
+much easier.
+
+I hope that these addition which make no changes in the original 
+MVPFORTH will be helpful. 

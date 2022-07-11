@@ -1,0 +1,343 @@
+                        GBH UTILITIES
+                       Glen B. Haydon
+                        23 Sept 1990
+
+  These utilities are in a text file generally following my suggestions for a programming style and may be written with any text editor.
+
+  This documentation will compile once it is compiled. It is a chicken and egg problem. The function, COMPILE-TEXT, with its primitive included in this documentation must be compiled in some other way before it can be used. It can be done from the screens in the blocks. It will then recompile itself.
+
+GETTING STARTED WITH MVPFORTH
+
+  There are a number of problems which people have discovered in getting started. The first is that the newer MASM has increased the number of reserved words so that MASM NOW produces four warnings.  These seem not to effect the compiled object code. The alternative would be to change the four labels used in the assembly source listing. I prefer to keep it unchanged.
+
+  The next problem has been with the code for PAGE (clear screen and home cursor). Because this depends upon hardware, the PAGE is vectored to only a carriage return and line feed. Once you are running, a primitive for page can be defined for your system. I have added <IMB-PAGE> for mode 3. It works for most color systems.
+
+  The next problem is with BYE in the MVPFORTH.EXE produced by LINK. I do not know what the problem is but it goes away when the EXE file is change to a COM file. There are many ways that this can be done. Since we are limited to a single segment a COM file is sufficient.
+
+  Originally, not all IBMs had even a single segment - believe it or not. The assembly source initializes LIMIT to 24K - a small area for some purposes. The value in the constant, LIMIT, can be increased (I usually make it FFF0 hex) and CHANGE is executed to remap the buffers and stack to the new location. SAVE-FORTH will then save the new image.
+
+  The formats on the floppy and hard drives used by IBM have been numerous. The most common one is a simple 360K floppy. The assembly source allows for up to 5 drives in a number of formats. Since it was written, there are even more formats. I have patched the text in ?CONFIGURE to produce my current choice.
+
+  Somehow DOS must know what size and format of disk you have in each selected drive. This information is saved in the first 20 bytes of the first sector. A DUMP on the 0 BLOCK will display those bytes. The following simple functions will select the values and compute the values used in the three arrays of MVPFORTH - BLK/DRV, SEC/TR and SEC/BLK. All values are not used in the PC-DOS version of the assembly source code. 
+
+{ HEX  
+: .DISK-NAME   EMPTY-BUFFERS 0 BLOCK 3 + 8 TYPE ;
+
+: ?SEC/BLK     0 BLOCK 0B + @   400 SWAP / ;
+
+: ?BLK/DRV     0 BLOCK 13 + @ 0    ?SEC/BLK  U/MOD SWAP DROP ;
+
+: ?SEC/TR      0 BLOCK 18 + @  ;
+
+: ?HEADS       0 BLOCK 1A + @ ;
+                                                                                                 : ?FORMAT
+     CR .DISK-NAME   ?BLK/DRV CR 0 6 D.R ."  BLK/DRV"
+     ?SEC/TR CR 6 .R ."  XEC/TR"  ?SEC/BLK CR 6 .R ."  SEC/BLK"
+     ?HEADS CR 6 .R ."  HEADS" CR  ;
+
+  DECIMAL }
+
+  With these functions, the currently selected drive can be examined. The ultimate test is to the try the function ?FORMAT and compare with what you know. 
+
+  It was several years before I figured out how to tell DOS the format of the current drive from Forth. This was especially frustrating when the format of the drives changed with each version. In fact the early version of the 320K format read out one side of the disk and then returned to do the other side. It is prefered to read double sided disks as cylinders. Therefore, the MVPFORTH assembly code forces the old 320K format to be read by cylinders rather than sides when a density code of 1 is selected. The other density codes read by cylinders.
+
+  Since one can always address the first block of a disk the same way, that information can be used to RECONFIGURE the values in the necessary arrays according to the current drives. If the two floppy drives are different, they should be given different density codes (Usually, 3 & 2). You can also access your hard drives. I reserve a partition for Forth blocks. (Being a creature of habit, I still like direct access to the disks in block and develop code that way. After it works I do what I am doing now.) 
+
+  A check is put in RECONFIGURE, should the drive not have a disk in it.
+
+{
+: RECONFIGURE
+   DR0   MAX-DRV  0
+   DO  CR I . 2 SPACES  I DR-DEN 6 -
+    IF   0 BLOCK DROP DISK-ERROR @
+     IF   ." Drive not ready."
+     ELSE   54 I 1+ SYSCALL DROP   ?BLK/DRV DUP U.
+       BLK/DRV I DR-DEN 2* + !
+       ?SEC/TR  SEC/TR  I DR-DEN 2* + !
+       ?SEC/BLK SEC/BLK I DR-DEN 2* + !
+     THEN
+   ELSE  ." NULL drive. "
+   THEN
+   BLK/DRV    I DR-DEN  2* + @    OFFSET +!
+   LOOP  DR0 CR CR  ." DR0 Selected"  CR CR  ;                                                                                  
+}
+
+SOURCE IN FILES
+
+  Another problem is that of learning to maintain separate system and screens disks. Many people have found this inconvenient. F83 and FPC have gone on to files. In F83 the blocks are stored in files and in FPC all source is in text files with a good text editor. Chuck taught me and I learned to use his editor. It is included in the MVPFORTH Screens Disk.
+
+  But there is no standard way which every one uses. Over the years I developed some utilities so that I could work with screens and files. The first method was to move the screens to PAD compressing the blank spaces. This cut down the size, often to one third, and allowed porting my screens in DOS files. The functions are factored:
+
+{
+CREATE CNT 0 ,
+
+: COMPRESS    ( addr, block# --- addr )
+   0 CNT !
+   BLOCK  1024 OVER + SWAP
+   DO  I C@ DUP 32 =
+    IF  DROP   CNT @ 126 =
+     IF 255 OVER C!  1+   0 CNT !
+     ELSE 1 CNT +!
+     THEN
+    ELSE  >R CNT @ ?DUP
+     IF 128 OR OVER  C! 1+ 0 CNT ! THEN R>  OVER C! 1+
+    THEN
+   LOOP     CNT @ ?DUP
+   IF   128 OR  OVER  C! 1+ THEN  ;
+}
+  With a counter, CNT, initialized to zero, the selected block is scanned by a DO-LOOP one byte at a time. If a byte is a space, the counter is increased for 127 spaces. At this point the eighth bit is set for 127 bytes of space compressed to one byte. Counting then starts over. If the next byte is not a space, the previously counted spaces have the eighth bit set before the character value is stored. Forth was an ideal language to work this out on an interactive basis.
+
+  Once compressed, it would be nice to expand the image.
+{
+: EXPAND      ( addr, block#  --- )
+   0 CNT !  DUP >R BLOCK UPDATE
+   BEGIN
+     OVER C@ DUP 128 AND
+     IF  127 AND  DUP   CNT +!
+       DDUP   BLANK    +
+     ELSE OVER C!  1+   1 CNT +!
+     THEN  SWAP 1+ SWAP
+     CNT @ 1024 =
+   UNTIL   DROP  R> 1+   FLUSH  ;                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+  The compression and expansion complement each other and can be compared against each other. Then, they can be combined to include more than one block.  A problem with this method is that the compressed image must fit into the remaining space in the Forth implementation. I found that I could usually get 100 screens into that space.
+
+{
+: COMPRESSES    ( last-block+1, first-block --- addr  )
+   PAD ROT ROT
+   DO I . I COMPRESS
+   LOOP   26 OVER C! ;
+
+                                                                                                          : EXPANDS         ( first-block --- addr. next-block )
+   PAD SWAP
+   BEGIN    DUP . EXPAND
+     OVER C@ 26 =
+   UNTIL ;                                                                                                                                                                                                                                                                                                                      
+}
+  The usual DOS file ends with the ASCII value 26 and that is used here. 
+
+
+  Once the image is compressed it needs to be saved as a DOS file. The original way of doing this used a file control block much the way older CP/M systems worked. Later a system of handles was developed. Since I rarely have need for this, and this code works for the currently selected path on a given drive, I have not taken the time to develop the newer methods.
+
+  A file control block may take up to 44 bytes including 7 preceding its beginning. Thus we set up such an array and define its beginning offset 7 bytes. Confused? It takes some study but that can be rewarding if you need to play with DOS files. You can change file dates and all sorts of things.
+
+{
+CREATE fcb 44 ALLOT
+
+: FCB  fcb  7 + ;
+
+: MAKE-FCB
+   13  0  SYSCALL  DROP                          ( Reset disk )
+   CR CR ." Enter  [d:]filename.typ --- "
+   FCB 37 0 FILL FCB 1+ 11 BLANK
+   QUERY                                          ( Make FCB )
+   46 WORD  DUP 2+ C@ 58 =
+   IF DUP 1+ C@ 65 - 14 SWAP SYSCALL DROP         ( Select drive )
+     COUNT 2- SWAP 2+ SWAP ELSE COUNT
+   THEN
+   8 MIN FCB 1+ SWAP CMOVE
+   BL WORD COUNT 3 MIN FCB 9 + SWAP CMOVE  CR ;
+
+}
+  This general method utilizes the system function calls. Variations of it are used in SAVE-FORTH and other places.
+
+  Once a file has a file control block it can be used to read or write to that file. Our next job is to read and write the compressed file. We will use MAKE-FCB as part of the next functions.
+
+{
+: TO-PAD
+   MAKE-FCB
+   15 FCB SYSCALL                            ( Open file )
+   255 AND   ABORT" File not found. "
+   FCB 16 +  @    128 +   PAD + PAD          ( Find size )
+   DO  26 I  SYSCALL DROP                    ( Set DMA )
+     20 FCB SYSCALL DROP                     ( Read sector )
+   128 /LOOP
+   16 FCB SYSCALL DROP ;                     ( Close file )
+
+: SAVE-PAD     ( count --- )
+   16 FCB SYSCALL DROP
+   MAKE-FCB                                   ( Close first )
+   17 FCB SYSCALL 255 AND 0=                  ( ? Exist )
+   IF CR ." File exists. Replace?  <Y> : " KEY 89 -
+     IF ." Aborted " ABORT
+     ELSE 19 FCB SYSCALL DROP
+     THEN
+   THEN
+   22 FCB SYSCALL DROP                         ( Make file )
+   128 +  PAD +   PAD
+   DO 26 I SYSCALL DROP                        ( Set DMA )
+     21 FCB SYSCALL DROP                       ( Write sequential )
+   128 /LOOP
+   16 FCB SYSCALL DROP  ;                      ( Close file )
+
+}
+
+  Now we have written and tested the tools in pieces, it is time to put them together. It is difficult to remember all of the necessary parameters, so prompts have been included and the information needed is used immediately.
+
+
+{
+: SCREENS>FILE
+   CR CR ." Will convert as range of screens to a "
+      CR ." compressed file with prompts."
+   CR CR ." Enter the beginning screen number --> "
+   QUERY BL WORD NUMBER DROP
+      CR ." Enter the last screen number      --> "
+   QUERY BL WORD NUMBER DROP   1+ SWAP
+   CR CR   COMPRESSES    PAD -    SAVE-PAD
+   CR CR ." File saved. " CR CR ;
+
+: FILE>SCREENS
+   CR CR ." Will convert a compressed file to the necessary"
+      CR ." number of blocks with prompts."
+   TO-PAD
+   CR CR ." Enter the beginning screen number --> "
+   QUERY BL WORD NUMBER DROP
+   CR CR   EXPANDS  DDROP
+   CR CR ." Screens loaded. "   CR CR   ;
+
+}
+
+   Rather than saving screens as compressed files, one might want to change the screens to files in blocks. These could then be used by F83. Note that in this case PAD is used for only a block at a time. Any number of blocks can be saved up to the space on your disk.
+
+{
+: BLOCKS->FILE    ( last, first --- )
+   16 FCB SYSCALL DROP     MAKE-FCB          ( Close first )
+   17 FCB SYSCALL 255 AND 0=                 ( ? Exist )
+   IF CR ." File exists. Replace?  <Y> : " KEY 89 -
+     IF ." Aborted " ABORT
+     ELSE 19 FCB SYSCALL DROP
+     THEN
+   THEN
+   22 FCB SYSCALL DROP                       ( Make file )
+   DO 26 PAD SYSCALL DROP                    ( Set DMA )
+     I BLOCK PAD 1024 CMOVE     1024 0
+     DO 26 I PAD + SYSCALL DROP
+        21     FCB SYSCALL DROP              ( Write sequent )
+     128 /LOOP
+     ?TERMINAL IF LEAVE THEN
+   LOOP
+   16 FCB SYSCALL DROP  ;                    ( Close file )
+
+}
+
+  And as long as we are doing this, let's make a file of blank screens.
+
+{
+: MAKE-FILE     ( n --- )   0   ( Makes n a size count )
+   16 FCB SYSCALL DROP     MAKE-FCB          ( Close first )
+   17 FCB SYSCALL 255 AND 0=                 ( ? Exist )
+   IF CR ." File exists. Replace?  <Y> : " KEY 89 -
+     IF ." Aborted " ABORT
+     ELSE 19 FCB SYSCALL DROP
+     THEN
+   THEN
+   22 FCB SYSCALL DROP                       ( Make file )
+   PAD 1024 BLANK
+   DO               8 0
+     DO 26  PAD  SYSCALL DROP                ( Set DMA )
+        21  FCB  SYSCALL DROP                ( Write sequential )
+     1 /LOOP
+     ?TERMINAL IF LEAVE THEN
+   LOOP
+   16 FCB SYSCALL DROP  ;                    ( Close file )
+}
+
+  With MAKE-FILE on a newly formatted, unused disk, a single file can fill the entire disk and prevent writing another file on top of screens. The first six blocks are given up to DOS, but everything after that is available in the usual manner. By changing the value of OFFSET ( -6 OFFSET +! ), the blocks will have the same number when read as blocks in a file as the same block on the same disk read normally.
+
+  I have recently started making my screens disk this way for convenience and protection. I still read them the old way. The content of the disk can be compressed with ARC or ZIP with major space savings.
+
+  Now that we have the screens in files, it might be convenient to read them as files as well. The disadvantage is that you are no longer able to read the DOS information and data with Forth. You could of course write a set of DOS functions from Forth. But really now, if that is what you want, just use a more conventional language and system.
+
+READING BLOCKS IN FILES
+
+  But there are those occasion where one might want to read screens in files. It is easy enough to write a new R/W that can be vectored into 'R/W. DOS files in block format can be read from hard disk files as well as floppies without the possibility of conflicts.
+
+  There is the loss of ability to read the disk structure and other files for patching an so on. Salvaging data on disks for myself and others is one of my sports. I use Forth all of the time for that.
+
+
+{
+: FILE-R/W    ( addr, blk, f  --- )
+   15 FCB SYSCALL DROP
+   USE @ >R   ROT USE !
+   SWAP   FCB 17 + @  4 /  1-  OVER  <
+   IF  DDROP R> USE ! 1 ABORT" Block out of file range" THEN
+   8 * 1-    FCB 33 + !     8 0
+   DO  1 FCB 33 +  +!
+    26  I 128  * USE @ +  SYSCALL DROP
+    34  OVER  -      FCB  SYSCALL DROP
+   LOOP    DROP    R> USE !
+   16 FCB SYSCALL DROP   ;
+
+}
+
+  Then it is just a matter of changing the vectored function for R/W.
+
+                                                                                                                                                                                                                                      {
+: FORTH-BLOCKS
+   EMPTY-BUFFERS
+   ' <R/W> CFA 'R/W !
+   DR0  CR ." DR0 selected." ;
+                                                                                                  : DOS-BLOCKS
+   EMPTY-BUFFERS
+   MAKE-FCB
+   15 FCB SYSCALL
+     255  AND   ABORT" File not found. "
+   16 FCB SYSCALL DROP
+   ' FILE-R/W  CFA  'R/W  !
+   0 OFFSET !    ;
+}
+
+
+  I have another variation, but I don't know what I used it for. Maybe it will at least serve an example of something more that can be done. Once you understand what is going on with Forth it is almost easier to write what you need than to select from among a number of canned programs. Here it is anyway: a pair of programs to move blocks to and from PAD as a buffer.
+
+{
+: BLOCKS->PAD      ( last-block+1, first-block --- )
+   PAD 1024 - ROT ROT
+   DO 1024 + I . I BLOCK OVER 1024 CMOVE
+   LOOP   26 SWAP 1024 + C! ;
+                                                                                                   : PAD->BLOCKS       ( first-block --- )
+   1-  PAD 1024 -
+   BEGIN 1024 +  DUP C@ 26 - WHILE
+   SWAP 1+  DDUP BLOCK UPDATE 1024 CMOVE SWAP
+   REPEAT DDROP ;
+}
+
+  Oh, I remember. I used this to copy blocks. It can be used between file blocks and disk blocks. There are other ways.
+
+  Now that you have all of this documentation, why not just compile the documentation. The idea is simple and it works. I have described it in Forth Dimensions and other places. A problem is that every word processor uses its own set of escape sequences, formatting instructions and carriage return/line feed conventions. You will need to get rid of them with some sort of filter such as I have included. This implementation is limited to files which will fit into your Forth implementation at PAD. The filtered program ends with a 00 byte with terminates interpretation. If you conclude with text you must finish with an open brace to stop at the 00 byte.
+
+  The close brace searches until an open brace is found before continuing with compilation.
+
+{ 
+: }
+  BEGIN
+    TIB @   >IN @ +
+    1 >IN +!
+    C@ 123 =
+  UNTIL  ;
+  IMMEDIATE
+
+
+HEX
+: FILTER
+   PAD 1-
+     BEGIN 1+ DUP C@ 1A =
+       IF 0 OVER ! 1 ELSE 0 THEN
+     UNTIL
+     PAD DDUP
+     DO I C@ 7F AND I C! 1 /LOOP
+     DO I C@  20 < IF 20 I C!  THEN
+     1 /LOOP   ;
+
+
+: READ
+   TIB @ >R    >IN @ >R   PAD TIB !   0 BLK !  0 >IN !
+   [COMPILE] }   <INTERPRET>      R> >IN !    R> TIB ! ;
+
+
+: COMPILE-TEXT TO-PAD FILTER READ ;
+DECIMAL
+
+}
+  No provision are made to find where you crashed. I found in checking this documentation that the compilation would eventually quit. VLIST then showed how far I got. I sometimes had to use EMPTY a couple of times to get back full control.
+
+ This programming style works very well with FPC. {

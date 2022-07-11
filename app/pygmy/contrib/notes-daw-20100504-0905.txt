@@ -1,0 +1,41 @@
+Hi Frank
+
+Thanks for you response.  Your insights have already helped.  
+
+I tried the method of typing EMPTY-BUFFERS to recover from typing accidents, 
+but it happened so often that it became a hinderance as it derailed my train of 
+thought. I anticipate this would be a discouragement for little kids, so I made 
+the changes to pygmy 1.7 to automate typo-recovery and to make it more 
+"kid friendly".  Other "preference" changes are included as information, since 
+they are already in my notes, and you might be interested in what people do 
+with your work after it leaves you. 
+
+1. Changed ATTR to $03 to make the screen easier on my eyes and help with (6c)
+2. changed recompile filenames to be slightly more descriptive:  
+    E1-kern.com, E2-EDIT.com E3-asm.com E4-final.com  
+3. changed block 140 default loads to   
+    a. 145 view for listing only, not auto edit
+    b. 149 Of Thens  (for colors)
+4. Changed block 141
+    a. 172-173 COLORS
+5. Changed block 142
+    a. include time from dos for auto-time stamps (not yet implemented)
+6. Changes to EDIT
+  a. block 103 - display slightly more descriptive text in header "Ins" and 
+      "Ovr" for insert and overtype modes instead of " i " or nothing
+  b. block 103 - make insert mode "Ins" by default (I couldn't notice when I trashed 
+     the text from fat fingers)
+  c. block 103 - added variable ED-HILITE initalized to $47 for the 
+      screen attribute for edits
+  d. block 103 - added word ED-SWAP to swap the "normal" ATTR with the 
+      edit-highlight ATTR    
+  e. block 104 added ED-SWAP to S! to change screen attribute of character typed
+  f. block 105 same as (e) for DELETE
+  g. block 112 CTL^A ALTERNATE calls FLUSH to commit changes (explicite save changes) 
+  h. block 114 - ESC from EDIT calls EMPTY-Buffers (explicite discard changes)  
+  i. block 114 - ESC also causes ED to clear screen and redisplay final contents 
+      of block.
+     
+
+
+    
